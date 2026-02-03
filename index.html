@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Will you be my Valentine?</title>
 
+  <!-- Confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
   <style>
@@ -16,172 +16,200 @@
       place-items: center;
       background: #ffe6f0;
       font-family: system-ui, sans-serif;
+      overflow: hidden;
     }
 
-   .card {
-  background: white;
-  padding: 24px;
-  border-radius: 20px;
-  text-align: center;
-  box-shadow: 0 20px 50px rgba(0,0,0,.15);
-  width: 90%;
-  max-width: 420px;
-}
-
-
-   h1 {
-  margin-bottom: 20px;
-  font-size: clamp(22px, 5vw, 32px);
-}
-
-
-   button {
-  padding: 14px 24px;
-  font-size: 16px;
-  font-weight: bold;
-  border-radius: 999px;
-  border: none;
-  cursor: pointer;
-  margin: 8px;
-  width: 100%;
-  max-width: 260px;
-  transition: transform 0.15s ease;
-}
-
-
-    #yes {
-      background: #ff3b7a;
-      color: white;
+    .card {
+      background: white;
+      padding: 24px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,.15);
+      width: 90%;
+      max-width: 420px;
+      position: relative;
+      z-index: 2;
     }
 
-    #no {
-      background: #e5e7eb;
+    h1 {
+      margin-bottom: 20px;
+      font-size: clamp(22px, 5vw, 32px);
     }
-    /* FLOATING HEARTS */
-.heart {
-  position: fixed;
-  bottom: -20px;
-  font-size: 24px;
-  animation: floatUp 6s linear infinite;
-  opacity: 0.8;
-  pointer-events: none;
-}
 
-@keyframes floatUp {
-  from {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-  to {
-    transform: translateY(-110vh) scale(1.4);
-    opacity: 0;
-  }
-}
+    button {
+      padding: 14px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      margin: 8px auto;
+      width: 100%;
+      max-width: 260px;
+      display: block;
+      transition: transform 0.15s ease;
+    }
 
+    #yes { background: #ff3b7a; color: white; }
+    #no  { background: #e5e7eb; }
+
+    /* Floating hearts */
+    .heart {
+      position: fixed;
+      bottom: -20px;
+      font-size: 24px;
+      animation: floatUp 6s linear infinite;
+      opacity: 0.8;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @keyframes floatUp {
+      from { transform: translateY(0) scale(1); opacity: 1; }
+      to   { transform: translateY(-110vh) scale(1.4); opacity: 0; }
+    }
+
+    /* Popup */
+    .popup {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      place-items: center;
+      z-index: 10;
+    }
+
+    .popup-content {
+      background: white;
+      padding: 24px;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 360px;
+      text-align: center;
+    }
+
+    input[type="date"] {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      width: 100%;
+      margin: 15px 0;
+    }
   </style>
 </head>
 
 <body>
 
+  <!-- 🎵 SAFE BACKGROUND MUSIC -->
+  <audio id="bgMusic" loop muted autoplay>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+  </audio>
 
   <div class="card">
     <h1>Will you be my Valentine? 💖✨</h1>
 
-    
-
     <button id="yes">Yes</button>
     <button id="no">No</button>
+
+    <!-- Result -->
     <div id="result" style="display:none;">
-  <h2>YAYYY 🎉💘</h2>
-  <p>You’re officially my Valentine 😍</p>
-</div>
+      <h2>YAYYY 🎉💘</h2>
+      <p>You’re officially my Valentine 😍</p>
+    </div>
+
+    <!-- GIF -->
     <div id="gifBox" style="display:none; margin-top:15px;">
-  <img 
-    src="https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif"
-    alt="Celebration"
-    style="width:100%; max-width:300px; border-radius:16px;"
-  >
-</div>
+      <img 
+        src="https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif"
+        style="width:100%; max-width:300px; border-radius:16px;"
+      >
+    </div>
 
-</div>
+    <!-- Proposal -->
+    <div id="proposal" style="display:none; margin-top:15px;">
+      <p style="font-size:18px;">💍 Will you go on a date with me?</p>
+      <button id="pickDate">Pick a date 📅</button>
+    </div>
+  </div>
 
-
+  <!-- 📅 DATE PICKER POPUP -->
+  <div class="popup" id="datePopup">
+    <div class="popup-content">
+      <h3>Choose our date 💕</h3>
+      <input type="date" id="dateInput">
+      <button id="confirmDate">Confirm ❤️</button>
+      <p id="dateResult" style="margin-top:10px;font-weight:600;"></p>
+    </div>
   </div>
 
   <script>
+    const yes = document.getElementById("yes");
+    const no = document.getElementById("no");
+    const music = document.getElementById("bgMusic");
 
-  const yes = document.getElementById("yes");
-  const no = document.getElementById("no");
+    // 🔊 Unmute music on first interaction (browser-safe)
+    document.addEventListener("click", () => {
+      music.muted = false;
+      music.play();
+    }, { once: true });
 
-  // YES button scale
-  let scale = 1;
+    // YES grows
+    let scale = 1;
+    function growYes() {
+      scale += 0.12;
+      yes.style.transform = `scale(${scale})`;
+    }
 
-  function growYes() {
-    scale += 0.12;
-    yes.style.transform = `scale(${scale})`;
-  }
+    // NO runs away
+    no.style.position = "absolute";
+    function moveNo() {
+      no.style.left = Math.random() * (window.innerWidth - no.offsetWidth) + "px";
+      no.style.top  = Math.random() * (window.innerHeight - no.offsetHeight) + "px";
+      growYes();
+    }
+    no.addEventListener("mouseenter", moveNo);
+    no.addEventListener("touchstart", moveNo);
+    no.addEventListener("click", e => e.preventDefault());
 
-  // NO button runs away
-  no.style.position = "absolute";
+    // YES click
+    yes.addEventListener("click", () => {
+      document.getElementById("result").style.display = "block";
+      document.getElementById("gifBox").style.display = "block";
 
-  function moveNo() {
-    const x = Math.random() * (window.innerWidth - no.offsetWidth);
-    const y = Math.random() * (window.innerHeight - no.offsetHeight);
+      setTimeout(() => {
+        document.getElementById("proposal").style.display = "block";
+      }, 1200);
 
-    no.style.left = x + "px";
-    no.style.top  = y + "px";
+      confetti({ particleCount: 200, spread: 120, colors: ["#ff3b7a","#ff9bb8","#fff"] });
+      setTimeout(() => confetti({ particleCount: 150, spread: 180 }), 400);
+    });
 
-    growYes(); // 👈 YES grows here
-  }
+    // 💍 Proposal → Date popup
+    document.getElementById("pickDate").onclick = () => {
+      document.getElementById("datePopup").style.display = "grid";
+    };
 
-  no.addEventListener("mouseenter", moveNo);
-  no.addEventListener("touchstart", moveNo);
+    document.getElementById("confirmDate").onclick = () => {
+      const date = document.getElementById("dateInput").value;
+      if (date) {
+        document.getElementById("dateResult").innerText =
+          "💖 Our date is set for " + date;
+      }
+    };
 
-  no.addEventListener("click", e => e.preventDefault());
+    // ❤️ Floating hearts
+    function createHeart() {
+      const h = document.createElement("div");
+      h.className = "heart";
+      h.innerText = "❤️";
+      h.style.left = Math.random() * 100 + "vw";
+      h.style.animationDuration = 4 + Math.random() * 3 + "s";
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 7000);
+    }
+    setInterval(createHeart, 600);
+  </script>
 
-  yes.addEventListener("click", () => {
-  document.getElementById("result").style.display = "block";
-
-  setTimeout(() => {
-    document.getElementById("surprise").style.display = "block";
-    document.getElementById("gifBox").style.display = "block";
-
-  }, 1500);
-
- // FIRST CONFETTI BLAST
-confetti({
-  particleCount: 200,
-  spread: 120,
-  colors: ["#ff3b7a", "#ff9bb8", "#ffffff"],
-  origin: { y: 0.6 }
-});
-
-// SECOND CONFETTI BLAST (after delay)
-setTimeout(() => {
-  confetti({
-    particleCount: 150,
-    spread: 180,
-    startVelocity: 45,
-    origin: { x: 0.5, y: 0.5 }
-  });
-}, 400);
-
-});
-
-    // FLOATING HEARTS
-function createHeart() {
-  const heart = document.createElement("div");
-  heart.className = "heart";
-  heart.innerText = "❤️";
-  heart.style.left = Math.random() * 100 + "vw";
-  heart.style.animationDuration = 4 + Math.random() * 3 + "s";
-
-  document.body.appendChild(heart);
-
-  setTimeout(() => heart.remove(), 7000);
-}
-
-setInterval(createHeart, 600);
-
-
-</script>
+</body>
+</html>
