@@ -142,10 +142,24 @@
     document.getElementById("surprise").style.display = "block";
   }, 1500);
 
+ // FIRST CONFETTI BLAST
+confetti({
+  particleCount: 200,
+  spread: 120,
+  colors: ["#ff3b7a", "#ff9bb8", "#ffffff"],
+  origin: { y: 0.6 }
+});
+
+// SECOND CONFETTI BLAST (after delay)
+setTimeout(() => {
   confetti({
-    particleCount: 300,
-    spread: 160
+    particleCount: 150,
+    spread: 180,
+    startVelocity: 45,
+    origin: { x: 0.5, y: 0.5 }
   });
+}, 400);
+
 });
 
     // FLOATING HEARTS
