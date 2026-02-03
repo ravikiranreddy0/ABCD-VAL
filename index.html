@@ -95,6 +95,12 @@
   <h2>YAYYY 🎉💘</h2>
   <p>You’re officially my Valentine 😍</p>
 </div>
+    <div id="surprise" style="display:none;margin-top:15px;">
+  <p style="font-size:18px;">
+    📅 Sooo… when are you free for our date? 😏
+  </p>
+</div>
+
 
   </div>
 
@@ -131,13 +137,17 @@
 
   yes.addEventListener("click", () => {
   document.getElementById("result").style.display = "block";
-  document.getElementById("bgMusic").play();
+
+  setTimeout(() => {
+    document.getElementById("surprise").style.display = "block";
+  }, 1500);
 
   confetti({
     particleCount: 300,
     spread: 160
   });
 });
+
     // FLOATING HEARTS
 function createHeart() {
   const heart = document.createElement("div");
