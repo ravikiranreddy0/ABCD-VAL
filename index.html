@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Will you be my Valentine?</title>
 
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
@@ -16,28 +18,36 @@
       font-family: system-ui, sans-serif;
     }
 
-    .card {
-      background: white;
-      padding: 30px;
-      border-radius: 20px;
-      text-align: center;
-      box-shadow: 0 20px 50px rgba(0,0,0,.15);
-    }
+   .card {
+  background: white;
+  padding: 24px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,.15);
+  width: 90%;
+  max-width: 420px;
+}
 
-    h1 {
-      margin-bottom: 25px;
-    }
 
-    button {
-      padding: 14px 22px;
-      font-size: 18px;
-      font-weight: bold;
-      border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      margin: 10px;
-      transition: transform 0.15s ease;
-    }
+   h1 {
+  margin-bottom: 20px;
+  font-size: clamp(22px, 5vw, 32px);
+}
+
+
+   button {
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  margin: 8px;
+  width: 100%;
+  max-width: 260px;
+  transition: transform 0.15s ease;
+}
+
 
     #yes {
       background: #ff3b7a;
@@ -51,9 +61,14 @@
 </head>
 
 <body>
+    <audio id="bgMusic" loop>
+  <source src="https://www.jiosaavn.com/song/rooba-rooba/BSkGWRpJYF0" type="audio/mpeg">
+</audio>
+
 
   <div class="card">
-
+    <h1>Will you be my Valentine? 💖</h1>
+    <button id="playMusic">🔊 Play Music</button>
 
     <button id="yes">Yes</button>
     <button id="no">No</button>
@@ -99,6 +114,8 @@ playBtn.addEventListener("click", () => {
   }
 
   no.addEventListener("mouseenter", moveNo);
+  no.addEventListener("touchstart", moveNo);
+
   no.addEventListener("click", e => e.preventDefault());
 
   yes.addEventListener("click", () => {
